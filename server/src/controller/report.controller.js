@@ -71,4 +71,8 @@ export const getReports = async (req, res) => {
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
+<<<<<<< HEAD
 };
+=======
+};
+>>>>>>> b25d31a06369e67be17e7408f6bcdf1ecd288c86
