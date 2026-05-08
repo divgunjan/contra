@@ -332,6 +332,18 @@ nav{
   pointer-events:none;
 }
 
+/* Search suggestions */
+.search-suggestions{
+  position:absolute;top:46px;left:0;right:0;z-index:600;
+  background:white;border:1px solid rgba(13,40,66,0.06);
+  border-radius:10px;box-shadow:0 6px 20px rgba(11,31,58,0.08);
+  max-height:320px;overflow:auto;font-size:13px;color:var(--navy);
+}
+.search-suggestions.hidden{display:none}
+.search-suggestions .sugg-item{padding:10px 12px;cursor:pointer;border-bottom:1px solid rgba(13,40,66,0.04)}
+.search-suggestions .sugg-item:last-child{border-bottom:none}
+.search-suggestions .sugg-item:hover{background:var(--page-bg)}
+
 .map-click-hint{
   position:absolute;bottom:80px;left:50%;transform:translateX(-50%);
   z-index:500;
@@ -849,6 +861,7 @@ body{
         <path d="M10 10l3 3" stroke="#8A97AA" stroke-width="1.4" stroke-linecap="round"/>
       </svg>
       <input class="map-search-input" id="map-search" placeholder="Search a location in India…" autocomplete="off" oninput="handleSearch(event)">
+      <div id="search-suggestions" class="search-suggestions hidden" aria-live="polite"></div>
     </div>
 
     <!-- Controls -->
@@ -951,12 +964,13 @@ let selectedSeverity = 'high';
 let description = '';
 let photos = [];
 let tempMarker = null, confirmedMarker = null;
-let map, pinCard, clickHint;
+let map, pinCard, clickHint, suggestionsEl;
 
 // ── MAP INIT ──
 window.addEventListener('DOMContentLoaded', () => {
   pinCard = document.getElementById('pin-card');
   clickHint = document.getElementById('click-hint');
+  suggestionsEl = document.getElementById('search-suggestions');
 
   // Init Leaflet map centered on India
   map = L.map('map', {
@@ -980,6 +994,14 @@ window.addEventListener('DOMContentLoaded', () => {
 
   // Hide hint after first interaction
   map.on('movestart', () => { clickHint.style.opacity = '0'; });
+
+  // Hide suggestions when clicking outside
+  document.addEventListener('click', (ev) => {
+    const input = document.getElementById('map-search');
+    if (!input.contains(ev.target) && suggestionsEl && !suggestionsEl.contains(ev.target)) {
+      suggestionsEl.classList.add('hidden');
+    }
+  });
 });
 
 // ── CUSTOM MARKER ──
@@ -1134,24 +1156,34 @@ function zoomIn(){ map.zoomIn(); }
 function zoomOut(){ map.zoomOut(); }
 function resetView(){ map.flyTo([20.5937, 78.9629], 5, { duration: 0.8 }); }
 
-// ── SEARCH (basic Nominatim) ──
+// ── SEARCH (Mapbox Autocomplete)
 let searchTimeout;
 function handleSearch(e) {
   clearTimeout(searchTimeout);
   const q = e.target.value.trim();
-  if (q.length < 3) return;
+  if (!suggestionsEl) return;
+  if (q.length < 2) { suggestionsEl.classList.add('hidden'); return; }
   searchTimeout = setTimeout(() => {
-    fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(q+' India')}&limit=1&accept-language=en`)
+    fetch(`/api/geocode?q=${encodeURIComponent(q)}`)
       .then(r => r.json())
       .then(data => {
-        if (data.length > 0) {
-          const { lat, lon } = data[0];
-          map.flyTo([+lat, +lon], 14, { duration: 1 });
-          placePin(+lat, +lon, false);
-          e.target.value = '';
-        }
-      }).catch(() => {});
-  }, 500);
+        const suggestions = data.suggestions || [];
+        if (!suggestions.length) { suggestionsEl.classList.add('hidden'); return; }
+        suggestionsEl.innerHTML = suggestions.map(item =>
+          `<div class="sugg-item" data-lat="${item.lat}" data-lng="${item.lng}">${item.fullAddress}</div>`
+        ).join('');
+        suggestionsEl.classList.remove('hidden');
+        suggestionsEl.querySelectorAll('.sugg-item').forEach(it => {
+          it.onclick = () => {
+            const lat = parseFloat(it.dataset.lat), lng = parseFloat(it.dataset.lng);
+            map.flyTo([lat, lng], 14, { duration: 1 });
+            placePin(lat, lng, false);
+            document.getElementById('map-search').value = '';
+            suggestionsEl.classList.add('hidden');
+          };
+        });
+      }).catch(() => { suggestionsEl.classList.add('hidden'); });
+  }, 250);
 }
 
 // ── ISSUE SELECTION ──

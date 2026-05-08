@@ -3,6 +3,7 @@ import mongoose from "mongoose";
 import dotenv from "dotenv";
 import cors from "cors";
 import reportRoutes from "./routes/report.routes.js";
+import geocodeRoutes from "./routes/geocode.routes.js";
 
 dotenv.config();
 
@@ -18,6 +19,7 @@ mongoose.connect(process.env.MONGO_URI)
 
 // routes
 app.use("/report", reportRoutes);
+app.use("/api/geocode", geocodeRoutes);
 
 // serve uploads
 app.use("/uploads", express.static("uploads"));
