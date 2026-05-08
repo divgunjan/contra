@@ -7,7 +7,8 @@ const reportSchema = new mongoose.Schema(
     lng: Number,
     description: String,
     imageUrl: String,
-    status: String
+    status: String,
+    severityScore: Number
   },
   { timestamps: true }
 );
