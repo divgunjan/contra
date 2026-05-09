@@ -425,3 +425,20 @@ window.addEventListener('DOMContentLoaded', () => {
     console.error('Restore failed', err);
   }
 });
+
+// Theme toggle functionality
+const themeToggle = document.getElementById('theme-toggle');
+
+function toggleTheme() {
+    document.documentElement.classList.toggle('dark');
+    const isDark = document.documentElement.classList.contains('dark');
+    localStorage.setItem('theme', isDark ? 'dark' : 'light');
+}
+
+// Load saved theme
+const savedTheme = localStorage.getItem('theme');
+if (savedTheme === 'dark') {
+    document.documentElement.classList.add('dark');
+}
+
+themeToggle.addEventListener('click', toggleTheme);

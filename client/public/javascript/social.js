@@ -23,6 +23,10 @@ const postComments = {};
 let leafletMap = null;
 let mapMarkers = [];
 
+// Theme toggle
+const themeToggle = document.getElementById('theme-toggle');
+const themeIcon = themeToggle.querySelector('i');
+
 const cityCoordinates = {
     "Delhi": [28.7041, 77.1025],
     "Jaipur": [26.9124, 75.7873],
@@ -349,5 +353,20 @@ if (btnMap) {
         showMap();
     });
 }
+
+// Theme toggle functionality
+function toggleTheme() {
+    document.documentElement.classList.toggle('dark');
+    const isDark = document.documentElement.classList.contains('dark');
+    localStorage.setItem('theme', isDark ? 'dark' : 'light');
+}
+
+// Load saved theme
+const savedTheme = localStorage.getItem('theme');
+if (savedTheme === 'dark') {
+    document.documentElement.classList.add('dark');
+}
+
+themeToggle.addEventListener('click', toggleTheme);
 
 renderPosts();

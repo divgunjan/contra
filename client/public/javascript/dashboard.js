@@ -36,7 +36,10 @@ setInterval(() => {
 // ── NAV SCROLL ────────────────────────────────────────────────────
 const nav = document.querySelector('nav');
 window.addEventListener('scroll', () => {
-  nav.style.background = window.scrollY > 40 ? 'rgba(255,255,255,0.98)' : 'rgba(255,255,255,0.92)';
+  const isDark = document.documentElement.classList.contains('dark');
+  const bgLight = window.scrollY > 40 ? 'rgba(255,255,255,0.98)' : 'rgba(255,255,255,0.92)';
+  const bgDark = window.scrollY > 40 ? 'rgba(42,42,42,0.98)' : 'rgba(42,42,42,0.92)';
+  nav.style.background = isDark ? bgDark : bgLight;
   nav.style.boxShadow  = window.scrollY > 40 ? '0 4px 20px rgba(0,0,0,0.06)' : 'none';
 });
 
@@ -47,6 +50,23 @@ document.querySelectorAll('a[href^="#"]').forEach(a => {
     if (el) { e.preventDefault(); el.scrollIntoView({ behavior:'smooth' }); }
   });
 });
+
+// Theme toggle functionality
+const themeToggle = document.getElementById('theme-toggle');
+
+function toggleTheme() {
+    document.documentElement.classList.toggle('dark');
+    const isDark = document.documentElement.classList.contains('dark');
+    localStorage.setItem('theme', isDark ? 'dark' : 'light');
+}
+
+// Load saved theme
+const savedTheme = localStorage.getItem('theme');
+if (savedTheme === 'dark') {
+    document.documentElement.classList.add('dark');
+}
+
+themeToggle.addEventListener('click', toggleTheme);
 
 // ── SCORE / BAR ANIMATION ─────────────────────────────────────────
 const bars   = document.querySelectorAll('.score-bar, .bar-fill');

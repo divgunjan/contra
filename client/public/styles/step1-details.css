@@ -7,9 +7,21 @@
   --border:#DDE5F0; --border-focus:#1A9E4A;
   --text-body:#4A5568; --text-muted:#8A97AA; --text-label:#2D3748;
   --red:#E53E3E; --amber:#D97706;
-  --shadow-sm:0 1px 4px rgba(11,31,58,0.07);
-  --shadow-md:0 4px 20px rgba(11,31,58,0.10);
-  --shadow-lg:0 8px 40px rgba(11,31,58,0.13);
+  --shadow-sm:0 1px 4px rgb(255, 255, 255);
+  --shadow-md:0 4px 20px rgb(255, 255, 255);
+  --shadow-lg:0 8px 40px rgb(255, 255, 255);
+}
+
+.dark {
+   --navy:#0B1F3A; --green:#1A9E4A; --green-dark:#157A3A; --green-bg:#EAF7EE;
+  --saffron:#E8831A; --saffron-bg:#FEF3E8;
+  --page-bg:#EEF3FA; --white:#FFFFFF;
+  --border:#DDE5F0; --border-focus:#1A9E4A;
+  --text-body:#4A5568; --text-muted:#8A97AA; --text-label:#2D3748;
+  --red:#E53E3E; --amber:#D97706;
+  --shadow-sm:0 1px 4px rgb(255, 255, 255);
+  --shadow-md:0 4px 20px rgb(255, 255, 255);
+  --shadow-lg:0 8px 40px rgb(255, 255, 255);
 }
 html,body{height:100%;overflow:hidden}
 body{font-family:'Poppins',sans-serif;background:var(--page-bg);color:var(--navy)}
@@ -22,11 +34,62 @@ nav{
   border-bottom:1px solid var(--border);
   padding:0 28px;display:flex;align-items:center;justify-content:space-between;
 }
+
+.dark nav {
+  background: rgba(26,26,26,0.97);
+}
+.dark .nav-brand {
+  color: #FFFFFF;
+}
+.dark .nav-back {
+  color: rgba(255,255,255,0.72);
+}
 .nav-logo{display:flex;align-items:center;gap:9px;text-decoration:none}
 .nav-logo svg{width:34px;height:34px}
 .nav-brand{font-size:16px;font-weight:700;color:var(--navy)}
 .nav-back{display:flex;align-items:center;gap:6px;font-size:13px;font-weight:600;color:var(--text-muted);text-decoration:none;transition:color .18s}
 .nav-back:hover{color:var(--navy)}
+.nav-cta { display:flex; gap:12px; align-items:center; }
+
+.theme-toggle-btn {
+  width: 40px;
+  height: 40px;
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  color: var(--navy);
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.theme-toggle-btn:hover {
+  background: var(--green);
+  border-color: var(--green);
+  color: white;
+}
+
+.theme-toggle-btn .fa-sun,
+.theme-toggle-btn .theme-icon-sun {
+  display: none;
+}
+
+.theme-toggle-btn svg {
+  width: 18px;
+  height: 18px;
+}
+
+.dark .theme-toggle-btn .fa-moon,
+.dark .theme-toggle-btn .theme-icon-moon {
+  display: none;
+}
+
+.dark .theme-toggle-btn .fa-sun,
+.dark .theme-toggle-btn .theme-icon-sun {
+  display: block;
+}
 .nav-step-pill{
   display:flex;align-items:center;gap:0;
   background:white;border:1px solid var(--border);
